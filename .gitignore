@@ -1,7 +1,10 @@
 # Hello World
 
-# IDE files
+# IDE, Git, and Config files
 /.idea/*
+/.git/*
+/amznpt*
+
 
 # credential files
 pat.txt
