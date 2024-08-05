@@ -1,10 +1,20 @@
 # Hello World
 
-# IDE, Git, and Config files
-/.idea/*
-/.git/*
-/amznpt*
+# virtual environment and configs
+pyvenv.cfg
+/ampznpt/
 
+# IDE, Git, and Cached files
+.idea/
+.git/
+/Lib/
+/Scripts/
+*.pyc
+*.pyo
+*.pyd
+
+# Environment Variables
+.env
 
 # credential files
 pat.txt
