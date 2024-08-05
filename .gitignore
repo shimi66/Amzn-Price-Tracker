@@ -1,0 +1,7 @@
+# Hello World
+
+# IDE files
+/.idea/*
+
+# credential files
+pat.txt
