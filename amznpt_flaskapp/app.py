@@ -12,9 +12,9 @@ def home():
         # todo search database and store results
 
         # Example: generating random time series data for demo
-        start_date = datetime.now() - timedelta(days=10)
+        start_date = datetime.now() - timedelta(days=50)
         results = [{'date': (start_date + timedelta(days=i)).strftime('%Y-%m-%d'),
-                    'value': random.randint(50, 150)} for i in range(10)]
+                    'value': random.randint(50, 150)} for i in range(50)]
 
     return render_template('home.html', query=query, results=results)
 
