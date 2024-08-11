@@ -3,8 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>AMZN Price Tracker Home</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- Moment.js for date handling -->
@@ -30,9 +32,10 @@
             const labels = {{ results | map(attribute='date') | list | tojson | safe }};
             const dataValues = {{ results | map(attribute='value') | list | tojson | safe }};
 
-            console.log('Labels:', labels);  // Debugging
-            console.log('Data Values:', dataValues);  // Debugging
+            // console.log('Labels:', labels);  // Debugging
+            // console.log('Data Values:', dataValues);  // Debugging
 
+            // Correctly map labels and dataValues for Chart.js to use below
             const chartData = labels.map((label, index) => ({
                 x: label,  // x-axis date
                 y: dataValues[index] // y-axis value
@@ -40,6 +43,8 @@
 
             // Initialize Chart.js
             const ctx = document.getElementById('timeSeriesChart').getContext('2d');
+
+            // Create Chart
             const timeSeriesChart = new Chart(ctx, {
                 type: 'line',
                 data: {
@@ -78,10 +83,8 @@
         </script>
 
     {% elif query %}
+        // wont be used until after non-dummy values are returned by app.py
         <p>No results found for "{{ query }}"</p>
-    {% else %}
-        const labels = [];
-        const dataValues = [];
     {% endif %}
 </body>
 </html>
