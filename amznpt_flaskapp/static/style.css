@@ -2,8 +2,59 @@ body {
     font-family: Arial, sans-serif;
     text-align: center;
     margin-top: 50px;
+    background-color:#00171f;
+    color: #005388;
 }
 
 h1 {
-    color: #2c3e50;
+    color: #005388;
+}
+
+h2 {
+    color: #005388;
+    text-align: left;
+    padding-left: 20px;
+}
+
+ul {
+    list-style-type: none;
+    text-align: left;
+    padding-left: 20px;
+    margin-left: 0px;
+}
+
+ul li {
+    padding: 5px 0;
+}
+
+/* Style for the search bar and form */
+.search-form {
+    width = 100%;
+    padding-left: 0px;
+    margin-top: 20px;
+}
+
+.search-bar {
+    width: 800px; /* Adjust the width of the search bar */
+    padding: 8px;
+    font-size: 12px;
+    border: 1px solid #ccc;
+    border-radius: 5px 0 0 5px;
+    display: inline-block;
+}
+
+button[type="submit"] {
+    padding: 8px 12px;
+    font-size: 12px;
+    border: 1px solid #ccc;
+    border-left: none; /* Remove the border between input and button */
+    background-color: #007BFF; /* Button background color */
+    color: white;
+    cursor: pointer;
+    border-radius: 0 5px 5px 0;
+    display: inline-block;
+}
+
+button[type="submit"]:hover {
+    background-color: #0056b3; /* Darken the button color on hover */
 }

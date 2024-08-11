@@ -3,11 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home Page</title>
+    <title>AMZN Price Tracker Home</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <h1>Amazon Price Tracker</h1>
-    <p>This will be the home page of this application</p>
+    <p>This page is under construction</p>
+
+    <!-- Search Bar -->
+    <form action="/" method="Get" class="search-form">
+        <input type="text" name="query" placeholder="Search for Amazon product here..." class="search-bar" value="{{ query }}">
+        <button type="submit">Search</button>
+    </form>
+
+    <!-- Display search results if they exist -->
+    {% if results %}
+        <h2>Search Results:</h2>
+        <ul>
+            {% for result in results %}
+                <li>{{ result }}</li>
+            {% endfor %}
+        </ul>
+    {% elif query %}
+        <p>No results found for "{{ query }}"</p>
+    {% endif %}
 </body>
 </html>
