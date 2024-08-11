@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AMZN Price Tracker Home</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Moment.js for date handling -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@1.0.0/dist/chartjs-adapter-moment.min.js"></script>
 </head>
 <body>
     <h1>Amazon Price Tracker</h1>
@@ -16,16 +21,67 @@
         <button type="submit">Search</button>
     </form>
 
-    <!-- Display search results if they exist -->
+    <!-- Display search results as a graph if they exist -->
     {% if results %}
-        <h2>Search Results:</h2>
-        <ul>
-            {% for result in results %}
-                <li>{{ result }}</li>
-            {% endfor %}
-        </ul>
+        <h2>Search Results (Time Series):</h2>
+        <canvas id="timeSeriesChart" width="600" height="300"></canvas>
+        <script>
+            // Safely handle results if they exist
+            const labels = {{ results | map(attribute='date') | list | tojson | safe }};
+            const dataValues = {{ results | map(attribute='value') | list | tojson | safe }};
+
+            console.log('Labels:', labels);  // Debugging
+            console.log('Data Values:', dataValues);  // Debugging
+
+            const chartData = labels.map((label, index) => ({
+                x: label,  // x-axis date
+                y: dataValues[index] // y-axis value
+            }));
+
+            // Initialize Chart.js
+            const ctx = document.getElementById('timeSeriesChart').getContext('2d');
+            const timeSeriesChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Values',
+                        data: chartData,
+                        borderColor: 'rgba(0, 0, 0, 1)',
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        x: {
+                            type: 'time',
+                            time: {
+                                parser: 'YYYY-MM-DD',
+                                unit: 'day',
+                                tooltipFormat: '11'
+                            },
+                            title: {
+                                display: true,
+                                text: 'Date'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Value'
+                            }
+                        }
+                    }
+                }
+            });
+        </script>
+
     {% elif query %}
         <p>No results found for "{{ query }}"</p>
+    {% else %}
+        const labels = [];
+        const dataValues = [];
     {% endif %}
 </body>
 </html>
