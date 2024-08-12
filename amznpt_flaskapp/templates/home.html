@@ -13,82 +13,115 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@1.0.0/dist/chartjs-adapter-moment.min.js"></script>
 </head>
+
 <body>
     <h1>Amazon Price Tracker</h1>
     <p>This page is under construction</p>
 
     <!-- Search Bar -->
-    <form action="/" method="Get" class="search-form">
+    <form action="/data" method="Get" class="search-form" id="search-form">
         <input type="text" name="query" placeholder="Search for Amazon product here..." class="search-bar" value="{{ query }}">
         <button type="submit">Search</button>
     </form>
 
-    <!-- Display search results as a graph if they exist -->
-    {% if results %}
-        <h2>Search Results (Time Series):</h2>
-        <canvas id="timeSeriesChart" width="600" height="300" style="background-color: #003459"></canvas>
-        <script>
-            // Safely handle results if they exist
-            const labels = {{ results | map(attribute='date') | list | tojson | safe }};
-            const dataValues = {{ results | map(attribute='value') | list | tojson | safe }};
+    <!-- Search Table -->
+    <table id="searchTable">
+        <thead>
+            <tr>
+                <th>Available Items</th>
+            </tr>
+        </thead>
+        <tbody id="searchResults">
+            <!-- Placeholder for products -->
+            <tr><td>Product A</td></tr>
+            <tr><td>Product B</td></tr>
+            <tr><td>Product C</td></tr>
+        </tbody>
+    </table>
 
-            // console.log('Labels:', labels);  // Debugging
-            // console.log('Data Values:', dataValues);  // Debugging
+    <!-- Container for Chart -->
+    <div id="chartContainer" style="display:none;">
+        <canvas id="timeSeriesChart"></canvas>
+    </div>
 
-            // Correctly map labels and dataValues for Chart.js to use below
-            const chartData = labels.map((label, index) => ({
-                x: label,  // x-axis date
-                y: dataValues[index] // y-axis value
-            }));
+    <script>
+        document.getElementById('search-form').addEventListener('submit', function(event) {
+            event.preventDefault();
 
-            // Initialize Chart.js
-            const ctx = document.getElementById('timeSeriesChart').getContext('2d');
+            const formData = new FormData(this);
+            const queryParams = new URLSearchParams(formData).toString();
+            const url = `${this.action}?${queryParams}`;
 
-            // Create Chart
-            const timeSeriesChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Values',
-                        data: chartData,
-                        borderColor: 'rgba(0, 0, 0, 1)',
-                        backgroundColor: 'rgba(0, 52, 89, 1)',
-                        borderWidth: 1,
-                        tension: 0.1,
-                        cubicInterpolationMode: 'monotone',
-                        pointRadius: 0.5,
-                        pointHoverRadius: 5,
-                        hitRadius: 10
-                    }]
-                },
-                options: {
-                    scales: {
-                        x: {
-                            type: 'time',
-                            time: {
-                                parser: 'YYYY-MM-DD',
-                                unit: 'day',
+            fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Assuming data contains 'labels' and 'dataValues' for the chart
+                const labels = data.labels;
+                const dataValues = data.dataValues;
+
+                // create the chart
+
+                // Correctly map labels and dataValues for Chart.js to use below
+                const chartData = labels.map((label, index) => ({
+                    x: label,  // x-axis date
+                    y: dataValues[index] // y-axis value
+                }));
+
+                // Initialize Chart.js
+                const ctx = document.getElementById('timeSeriesChart').getContext('2d');
+
+                // Create Chart
+                const timeSeriesChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Values',
+                            data: chartData,
+                            borderColor: 'rgba(0, 0, 0, 1)',
+                            backgroundColor: 'rgba(0, 52, 89, 1)',
+                            borderWidth: 1,
+                            tension: 0.1,
+                            cubicInterpolationMode: 'monotone',
+                            pointRadius: 0.5,
+                            pointHoverRadius: 5,
+                            hitRadius: 10
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            x: {
+                                type: 'time',
+                                time: {
+                                    parser: 'YYYY-MM-DD',
+                                    unit: 'day',
+                                },
+                                title: {
+                                    display: true,
+                                    text: 'Date'
+                                }
                             },
-                            title: {
-                                display: true,
-                                text: 'Date'
-                            }
-                        },
-                        y: {
-                            title: {
-                                display: true,
-                                text: 'Price'
+                            y: {
+                                title: {
+                                    display: true,
+                                    text: 'Price'
+                                }
                             }
                         }
                     }
-                }
-            });
-        </script>
+                });
 
-    {% elif query %}
-        // wont be used until after non-dummy values are returned by app.py
-        <p>No results found for "{{ query }}"</p>
-    {% endif %}
+                // Hide the table and show the chart
+                document.getElementById('searchTable').style.display = 'none';
+                document.getElementById('chartContainer').style.display = 'block';
+            })
+            .catch(error => console.error("Error:", error));
+        });
+    </script>
 </body>
 </html>
