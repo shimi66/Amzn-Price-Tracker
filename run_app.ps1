@@ -8,7 +8,7 @@ Set-Location -Path "C:\Users\Erik\Desktop\Amzn-Price-Tracker"
 $env:FLASK_APP = "amznpt_flaskapp/app.py"
 
 # install requirements
-pip install -r requirements.txt
+pip install -r requirements.txt -q
 
 # start Flask app
 flask run

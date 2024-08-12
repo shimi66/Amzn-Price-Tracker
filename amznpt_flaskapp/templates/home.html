@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>AMZN Price Tracker Home</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Moment.js for date handling -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@1.0.0/dist/chartjs-adapter-moment.min.js"></script>
+</head>
+
+<body>
+    <h1>Amazon Price Tracker</h1>
+    <p>This page is under construction</p>
+
+    <!-- Search Bar -->
+    <form action="/data" method="Get" class="search-form" id="search-form">
+        <input type="text" name="query" placeholder="Search for Amazon product here..." class="search-bar" value="{{ query }}">
+        <button type="submit">Search</button>
+    </form>
+
+    <!-- Search Table -->
+    <table id="searchTable">
+        <thead>
+            <tr>
+                <th>Available Items</th>
+            </tr>
+        </thead>
+        <tbody id="searchResults">
+            <!-- Placeholder for products -->
+            <tr><td>Product A</td></tr>
+            <tr><td>Product B</td></tr>
+            <tr><td>Product C</td></tr>
+        </tbody>
+    </table>
+
+    <!-- Container for Chart -->
+    <div id="chartContainer" style="display:none;">
+        <canvas id="timeSeriesChart"></canvas>
+    </div>
+
+    <script>
+        document.getElementById('search-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const formData = new FormData(this);
+            const queryParams = new URLSearchParams(formData).toString();
+            const url = `${this.action}?${queryParams}`;
+
+            fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Assuming data contains 'labels' and 'dataValues' for the chart
+                const labels = data.labels;
+                const dataValues = data.dataValues;
+
+                // create the chart
+
+                // Correctly map labels and dataValues for Chart.js to use below
+                const chartData = labels.map((label, index) => ({
+                    x: label,  // x-axis date
+                    y: dataValues[index] // y-axis value
+                }));
+
+                // Initialize Chart.js
+                const ctx = document.getElementById('timeSeriesChart').getContext('2d');
+
+                // Create Chart
+                const timeSeriesChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Values',
+                            data: chartData,
+                            borderColor: 'rgba(0, 0, 0, 1)',
+                            backgroundColor: 'rgba(0, 52, 89, 1)',
+                            borderWidth: 1,
+                            tension: 0.1,
+                            cubicInterpolationMode: 'monotone',
+                            pointRadius: 0.5,
+                            pointHoverRadius: 5,
+                            hitRadius: 10
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            x: {
+                                type: 'time',
+                                time: {
+                                    parser: 'YYYY-MM-DD',
+                                    unit: 'day',
+                                },
+                                title: {
+                                    display: true,
+                                    text: 'Date'
+                                }
+                            },
+                            y: {
+                                title: {
+                                    display: true,
+                                    text: 'Price'
+                                }
+                            }
+                        }
+                    }
+                });
+
+                // Hide the table and show the chart
+                document.getElementById('searchTable').style.display = 'none';
+                document.getElementById('chartContainer').style.display = 'block';
+            })
+            .catch(error => console.error("Error:", error));
+        });
+    </script>
+</body>
+</html>
